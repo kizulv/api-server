@@ -11,11 +11,22 @@ export const initMqtt = () => {
 
   console.log(`[MQTT] Connecting to ${mqttUrl}...`);
 
-  const client = mqtt.connect(mqttUrl, {
+  const parsedUrl = new URL(mqttUrl);
+  const options: mqtt.IClientOptions = {
     username,
     password,
     clientId: `api_server_bridge_${Math.random().toString(16).slice(2, 8)}`,
-  });
+    protocol: parsedUrl.protocol.replace(":", "") as
+      | "mqtt"
+      | "mqtts"
+      | "ws"
+      | "wss",
+    host: parsedUrl.hostname,
+    port: parsedUrl.port ? parseInt(parsedUrl.port) : undefined,
+    path: parsedUrl.pathname,
+  };
+
+  const client = mqtt.connect(options);
 
   client.on("connect", () => {
     console.log("[MQTT]     - Connected successfully");

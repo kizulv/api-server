@@ -11,7 +11,10 @@ if (!url || !token || !org || !bucket) {
   );
 }
 
-export const influxClient = new InfluxDB({ url, token });
+export const influxClient = new InfluxDB({
+  url: new URL(url).toString(),
+  token,
+});
 export const writeApi = influxClient.getWriteApi(org, bucket);
 export const queryApi = influxClient.getQueryApi(org);
 
